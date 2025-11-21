@@ -24,13 +24,6 @@
   <img src="https://img.shields.io/badge/Feito%20com-❤-brightgreen" />
 </p>
 
-<p align="center">
-  <img src="logo_safeplay.jpeg" alt="SafePlay Logo" width="120" />
-</p>
-
-<h1 align="center">🛡️ SafePlay • CyberBuddies Brasil</h1>
-<h3 align="center">Segurança e educação digital para crianças e adolescentes</h3>
-
 ---
 
 # 🇧🇷 Sobre o Projeto (PT-BR)
