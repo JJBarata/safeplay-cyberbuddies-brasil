@@ -72,6 +72,29 @@ https://cyberbuddies.com.br/game.html
 
 📧 **contato@cyberbuddies.com.br**
 
+# 🔒 Licença Proprietária / Proprietary License
+
+Este projeto é distribuído sob uma **Licença Proprietária**, pertencente exclusivamente à **SafePlay • CyberBuddies Brasil**.
+
+### 📌 Termos principais (PT-BR)
+
+Todos os direitos estão reservados.  
+**Não é permitido**, sem autorização formal por escrito:
+
+- Copiar  
+- Distribuir  
+- Reproduzir  
+- Modificar  
+- Reempacotar  
+- Publicar  
+- Utilizar para fins comerciais  
+- Criar obras derivadas  
+
+Qualquer uso não autorizado será considerado violação dos direitos autorais e poderá resultar em medidas legais.
+
+Para solicitações de permissão, entre em contato via:  
+📧 **contato@cyberbuddies.com.br**
+
 ---
 
 # 🇺🇸 About the Project (EN)
@@ -118,6 +141,25 @@ https://cyberbuddies.com.br/game.html
 
 ## 📬 Contact
 
+📧 **contato@cyberbuddies.com.br**
+
+### 📌 Main Terms (EN)
+
+All rights reserved.  
+It is **not permitted**, without prior written authorization:
+
+- Copying  
+- Distributing  
+- Reproducing  
+- Modifying  
+- Republishing  
+- Commercial use  
+- Repackaging  
+- Creating derivative works  
+
+Any unauthorized use is a copyright violation and may result in legal action.
+
+For permissions, contact:  
 📧 **contato@cyberbuddies.com.br**
 
 ---
