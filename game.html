@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Radar de Conversa – Prototype (v0.1) - Copyright Cyberbuddies.com.br</title>
+<style>
+  :root { --bg:#0f172a; --pane:#111827; --txt:#e5e7eb; --muted:#9ca3af; --accent:#22c55e; --danger:#ef4444; --bubble:#1f2937; --you:#0ea5e9;}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  .wrap{max-width:840px;margin:0 auto;padding:16px 12px 64px}
+  .card{background:var(--pane);border:1px solid #222;padding:12px 12px 8px;border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+  .row{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:8px 0 14px}
+  .title{font-weight:700;font-size:20px}
+  .muted{color:var(--muted);font-size:13px}
+  .progress{height:10px;background:#1f2937;border-radius:999px;overflow:hidden;border:1px solid #222}
+  .bar{height:100%;width:0%}
+  .bar.ok{background:linear-gradient(90deg,#10b981,#22c55e)}
+  .chat{display:flex;flex-direction:column;gap:10px;margin:14px 0 6px;min-height:240px}
+  .bubble{max-width:78%;padding:10px 14px;border-radius:16px;line-height:1.35;border:1px solid #222;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+  .npc{align-self:flex-start;background:var(--bubble)}
+  .you{align-self:flex-end;background:var(--you);color:#001018}
+  .choices{display:grid;gap:8px;margin-top:8px}
+  .btn{padding:10px 12px;border-radius:12px;border:1px solid #0b1220;background:#0b1220;color:#cfe8ff;cursor:pointer;font-weight:600}
+  .btn:hover{filter:brightness(1.1)}
+  .btn.safe{border-color:#065f46}
+  .btn.risky{border-color:#7f1d1d}
+  .footer{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .pill{padding:6px 10px;border:1px solid #223; border-radius:999px;font-size:12px;color:var(--muted)}
+  .result{padding:10px 12px;border-radius:12px;background:#0b1220;border:1px solid #223;margin-top:8px}
+  .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;margin-left:6px;border:1px solid #223}
+  .good{background:#0b2a19;color:#a7f3d0;border-color:#134e4a}
+  .bad{background:#2a0b0b;color:#fecaca;border-color:#7f1d1d}
+  .cta{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="row">
+      <div>
+        <div class="title">Radar de Conversa</div>
+        <div class="muted">Treine seu discernimento em chats online (Prototype (v0.1) - Copyright Cyberbuddies.com.br)</div>
+      </div>
+      <button id="restartBtn" class="btn" title="Reiniciar">🔄 Jogar de novo</button>
+    </div>
+
+    <div class="progress" aria-label="Progresso">
+      <div id="bar" class="bar ok" style="width:0%"></div>
+    </div>
+
+    <div id="chat" class="chat" aria-live="polite"></div>
+
+    <div id="choices" class="choices"></div>
+
+    <div id="footer" class="footer">
+      <span class="pill">Mensagens: <b id="stepNow">0</b>/<b id="stepMax">10</b></span>
+      <span class="pill">Pontuação segura: <b id="score">0</b></span>
+      <span class="pill">Perfil oculto: <b id="mask">?</b></span>
+    </div>
+
+    <div id="final" class="result" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+/* ==========
+   DADOS DO JOGO (fácil de editar/expandir)
+   Cada entrada: { text, choices: [ {label, safe:true/false, feedback} ] }
+   ========== */
+
+const PROMPTS_GOOD = [
+  { text: "Oi! Tbm curto jogos. Qual vc joga?",
+    choices: [
+      { label:"Jogo Minecraft e Roblox.", safe:true, feedback:"Ok falar de gostos gerais."},
+      { label:"Qual é sua escola e série?", safe:false, feedback:"Evite pedir info pessoal."}
+    ]},
+  { text: "Vi um meme engraçado. Quer que eu descreva?",
+    choices: [
+      { label:"Manda a descrição por aqui mesmo 😂", safe:true, feedback:"Mantém no app, sem links."},
+      { label:"Passa seu número pra te enviar no WhatsApp.", safe:false, feedback:"Evite migrar contato."}
+    ]},
+  { text: "Vou sair em 10min. Bora jogar amanhã?",
+    choices: [
+      { label:"Bora! Combinamos por aqui.", safe:true, feedback:"Mantém limites."},
+      { label:"Onde vc mora? Posso passar aí.", safe:false, feedback:"Nunca marcar encontro."}
+    ]},
+  { text: "Qual seu personagem favorito?",
+    choices: [
+      { label:"Gosto da Ellie do The Last of Us.", safe:true, feedback:"Opinião inofensiva."},
+      { label:"Qual seu endereço? Quero te enviar um presente.", safe:false, feedback:"Endereço é sensível."}
+    ]},
+  { text: "Você curte desafios de programação?",
+    choices: [
+      { label:"Sim! Mas só participo em grupos moderados.", safe:true, feedback:"Boa regra de segurança."},
+      { label:"Me chama no privado que eu te passo um executável.", safe:false, feedback:"Arquivos desconhecidos = risco."}
+    ]},
+];
+
+const PROMPTS_BAD = [
+  { text: "Melhor falar no privado e apagar aqui. Topa?",
+    choices: [
+      { label:"Prefiro ficar aqui no chat público.", safe:true, feedback:"Ótima decisão."},
+      { label:"Topo, me chama lá e apago tudo.", safe:false, feedback:"Sinal clássico de risco."}
+    ]},
+  { text: "Conta um segredo e eu conto um meu 😉",
+    choices: [
+      { label:"Não compartilho segredos com desconhecidos.", safe:true, feedback:"Autoproteção."},
+      { label:"Tá bom, mas não conta pra ninguém!", safe:false, feedback:"Coerção por segredo é grooming."}
+    ]},
+  { text: "Manda uma foto sua agora (ninguém vai ver).",
+    choices: [
+      { label:"Não envio fotos. Reportarei se insistir.", safe:true, feedback:"Postura firme e segura."},
+      { label:"Ok, mas apaga depois.", safe:false, feedback:"Nunca enviar imagens pessoais."}
+    ]},
+  { text: "Que horas seus pais saem de casa?",
+    choices: [
+      { label:"Não compartilho rotina da minha família.", safe:true, feedback:"Informação sensível."},
+      { label:"Saem às 19h, por quê?", safe:false, feedback:"Exposição de risco físico."}
+    ]},
+  { text: "Tenho um presente raro pra você. Só vem encontrar rapidinho.",
+    choices: [
+      { label:"Não encontro desconhecidos. Tchau.", safe:true, feedback:"Bloqueio/encerramento é correto."},
+      { label:"Okay, me passa o endereço.", safe:false, feedback:"Altíssimo risco."}
+    ]},
+];
+
+/* ==========
+   LÓGICA
+   ========== */
+
+const STEPS = 10;
+
+const dom = {
+  chat:   document.getElementById('chat'),
+  choices:document.getElementById('choices'),
+  bar:    document.getElementById('bar'),
+  stepNow:document.getElementById('stepNow'),
+  stepMax:document.getElementById('stepMax'),
+  score:  document.getElementById('score'),
+  mask:   document.getElementById('mask'),
+  final:  document.getElementById('final'),
+  restart:document.getElementById('restartBtn'),
+};
+
+let state;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function sample(arr, n){
+  return shuffle(arr).slice(0, n);
+}
+
+function start(){
+  state = {
+    hiddenProfile: Math.random()<0.5 ? 'GOOD' : 'BAD',
+    steps: STEPS,
+    stepIndex: 0,
+    scoreSafe: 0,
+    log: []
+  };
+  dom.chat.innerHTML = '';
+  dom.choices.innerHTML = '';
+  dom.final.style.display = 'none';
+  dom.stepMax.textContent = state.steps;
+  dom.mask.textContent = '🤖';
+  dom.score.textContent = '0';
+  updateBar();
+
+  // montar sequência: se GOOD -> 8 boas + 2 neutras do outro pool; se BAD -> 8 ruins + 2 do outro
+  const main = state.hiddenProfile === 'GOOD' ? PROMPTS_GOOD : PROMPTS_BAD;
+  const other= state.hiddenProfile === 'GOOD' ? PROMPTS_BAD  : PROMPTS_GOOD;
+
+  const seq = sample(main, 8).concat(sample(other, 2));
+  state.sequence = shuffle(seq).slice(0, state.steps);
+
+  // primeira mensagem do “NPC”
+  appendNpc("👋 Olá! Bora conversar um pouco?");
+  nextTurn(); // mostra a primeira pergunta
+}
+
+function appendNpc(text){
+  const b = document.createElement('div');
+  b.className = 'bubble npc';
+  b.textContent = text;
+  dom.chat.appendChild(b);
+  dom.chat.scrollTop = dom.chat.scrollHeight;
+}
+
+function appendYou(text){
+  const b = document.createElement('div');
+  b.className = 'bubble you';
+  b.textContent = text;
+  dom.chat.appendChild(b);
+  dom.chat.scrollTop = dom.chat.scrollHeight;
+}
+
+function updateBar(){
+  const pct = (state.stepIndex / state.steps) * 100;
+  dom.bar.style.width = pct + '%';
+  dom.stepNow.textContent = state.stepIndex;
+}
+
+function nextTurn(){
+  if(state.stepIndex >= state.steps){
+    askGuess();
+    return;
+  }
+  const q = state.sequence[state.stepIndex];
+  // mostra a fala do NPC
+  appendNpc(q.text);
+
+  // render choices
+  dom.choices.innerHTML = '';
+  q.choices.forEach((c, idx)=>{
+    const bt = document.createElement('button');
+    bt.className = 'btn ' + (c.safe ? 'safe' : 'risky');
+    bt.textContent = c.label;
+    bt.onclick = ()=>{
+      handleChoice(q, c);
+    };
+    dom.choices.appendChild(bt);
+  });
+}
+
+function handleChoice(question, choice){
+  appendYou(choice.label);
+  // feedback (opcional breve via NPC)
+  if(choice.safe){
+    state.scoreSafe += 1;
+    appendNpc("👍 " + choice.feedback);
+  } else {
+    appendNpc("⚠️ " + choice.feedback);
+  }
+  state.log.push({q:question.text, a:choice.label, safe:choice.safe});
+  state.stepIndex += 1;
+  updateBar();
+
+  // pequena pausa antes da próxima
+  dom.choices.innerHTML = '';
+  setTimeout(nextTurn, 450);
+}
+
+function askGuess(){
+  dom.choices.innerHTML = '';
+  appendNpc("Chegamos ao fim! Quem você acha que estava falando com você?");
+  ["Perfil do Bem","Perfil do Mal"].forEach(label=>{
+    const bt = document.createElement('button');
+    bt.className = 'btn';
+    bt.textContent = label;
+    bt.onclick = ()=>finish(label.includes("Mal") ? 'BAD' : 'GOOD');
+    dom.choices.appendChild(bt);
+  });
+}
+
+function finish(guess){
+  const correct = (guess === state.hiddenProfile);
+  dom.choices.innerHTML = '';
+  const score = state.scoreSafe;
+
+  const level =
+    score<=3 ? {txt:"Risco alto",cls:"bad"} :
+    score<=6 ? {txt:"Atenção",cls:"bad"} :
+    score<=9 ? {txt:"Bom",cls:"good"} :
+               {txt:"Excelente",cls:"good"};
+
+  const profTxt = state.hiddenProfile==='GOOD' ? 'Perfil do Bem' : 'Perfil do Mal';
+
+  dom.final.innerHTML = `
+    <div><b>Resultado:</b> Você marcou <b>${score}/${state.steps}</b> em respostas seguras.
+      <span class="tag ${level.cls}">${level.txt}</span>
+    </div>
+    <div style="margin-top:6px">
+      Seu palpite: <b>${guess==='GOOD'?'Perfil do Bem':'Perfil do Mal'}</b> —
+      ${correct ? '<span class="good tag">Acertou!</span>' : '<span class="bad tag">Errou</span>'}
+      &nbsp;|&nbsp; Perfil real: <b>${profTxt}</b>
+    </div>
+    <div style="margin-top:8px" class="muted">
+      Dica: sinais de risco incluem pedidos de sigilo, migração rápida para chats privados, solicitação de fotos/dados pessoais e convites para encontros.
+    </div>
+    <div class="cta">
+      <button class="btn" onclick="start()">🔄 Jogar de novo</button>
+      <button class="btn" onclick="console.log(${JSON.stringify(Date.now())}); exportLog()">⬇️ Exportar log (JSON)</button>
+    </div>
+  `;
+  dom.final.style.display = 'block';
+  dom.mask.textContent = state.hiddenProfile==='GOOD'?'😄':'⚠️';
+}
+
+function exportLog(){
+  const payload = {
+    when: new Date().toISOString(),
+    profile: state.hiddenProfile,
+    scoreSafe: state.scoreSafe,
+    steps: state.steps,
+    log: state.log
+  };
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'radar-conversa-log.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+document.getElementById('restartBtn').addEventListener('click', start);
+
+// 🚀 inicializa
+start();
+</script>
+</body>
+</html>

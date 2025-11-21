@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SafePlay - CyberBuddies Brasil</title>
+    <meta name="description" content="Startup focada em segurança e educação digital para crianças e adolescentes, com soluções modernas, acessíveis e baseadas em tecnologia.">
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <style>
+        :root {
+            --cor-fundo: #0b1320;
+            --cor-fundo-claro: #f5f7fb;
+            --cor-primaria: #00b8a9;
+            --cor-secundaria: #ffd166;
+            --cor-texto: #1b1b1f;
+            --cor-texto-claro: #ffffff;
+            --max-width: 1100px;
+            --card-fundo: #ffffff;
+            --borda-secao: #dde2ec;
+            --texto-suave: #5a627a;
+        }
+
+        body.tema-escuro {
+            --cor-fundo: #040712;
+            --cor-fundo-claro: #050816;
+            --cor-texto: #e2e6ff;
+            --cor-texto-claro: #ffffff;
+            --card-fundo: #111827;
+            --borda-secao: #1f2937;
+            --texto-suave: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: var(--cor-fundo-claro);
+            color: var(--cor-texto);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto-claro);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-area img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        nav a {
+            color: var(--cor-texto-claro);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        nav a:hover,
+        nav a:focus {
+            background-color: var(--cor-primaria);
+            color: var(--cor-texto-claro);
+        }
+
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            font-size: 1.4rem;
+        }
+
+        .theme-toggle-btn {
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 999px;
+            padding: 0.2rem 0.6rem;
+            background: transparent;
+            color: var(--cor-texto-claro);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 1.5rem 1rem 3rem;
+        }
+
+        section {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--borda-secao);
+        }
+
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.8fr);
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--cor-fundo);
+        }
+
+        body.tema-escuro .hero-text h1 {
+            color: var(--cor-texto-claro);
+        }
+
+        .hero-text p {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--texto-suave);
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            background-color: rgba(0, 184, 169, 0.12);
+            color: var(--cor-primaria);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.6rem 1.1rem;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cor-primaria), #38cfd3);
+            color: var(--cor-texto-claro);
+            box-shadow: 0 4px 12px rgba(0, 184, 169, 0.3);
+        }
+
+        .btn-secundary {
+            background-color: #ffffff;
+            color: var(--cor-fundo);
+            border: 1px solid #d1d7e5;
+        }
+
+        body.tema-escuro .btn-secundary {
+            background-color: var(--card-fundo);
+            color: var(--cor-texto-claro);
+            border-color: #374151;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-card {
+            background: var(--card-fundo);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            box-shadow: 0 12px 30px rgba(11, 19, 32, 0.18);
+        }
+
+        .hero-card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--cor-fundo);
+        }
+
+        body.tema-escuro .hero-card h2 {
+            color: var(--cor-texto-claro);
+        }
+
+        .hero-card p {
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            color: var(--texto-suave);
+        }
+
+        .hero-taglist {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            background-color: #eef1fb;
+            color: #343a5e;
+        }
+
+        body.tema-escuro .tag {
+            background-color: #111827;
+            color: #e5e7eb;
+        }
+
+        h2.section-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.4rem;
+            color: var(--cor-fundo);
+        }
+
+        body.tema-escuro h2.section-title {
+            color: var(--cor-texto-claro);
+        }
+
+        p.section-subtitle {
+            font-size: 0.9rem;
+            color: var(--texto-suave);
+            margin-bottom: 1rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.25rem;
+        }
+
+        .card {
+            background-color: var(--card-fundo);
+            border-radius: 0.8rem;
+            padding: 1rem;
+            box-shadow: 0 4px 14px rgba(15, 27, 49, 0.08);
+            font-size: 0.9rem;
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--cor-fundo);
+        }
+
+        body.tema-escuro .card h3 {
+            color: var(--cor-texto-claro);
+        }
+
+        ul {
+            padding-left: 1.2rem;
+            font-size: 0.9rem;
+        }
+
+        ul li {
+            margin-bottom: 0.35rem;
+        }
+
+        .highlight-box {
+            background-color: var(--card-fundo);
+            border-left: 4px solid var(--cor-primaria);
+            padding: 0.85rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--texto-suave);
+        }
+
+        .investors-box {
+            background-color: #0b1320;
+            color: var(--cor-texto-claro);
+            padding: 1.25rem;
+            border-radius: 1rem;
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1.5fr);
+            gap: 1.25rem;
+            align-items: center;
+        }
+
+        body.tema-escuro .investors-box {
+            background-color: #020617;
+        }
+
+        .investors-box h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .investors-box p {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .investors-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.6rem;
+            font-size: 0.85rem;
+        }
+
+        .metric {
+            background-color: rgba(255, 255, 255, 0.06);
+            padding: 0.6rem;
+            border-radius: 0.6rem;
+        }
+
+        .metric strong {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--cor-secundaria);
+        }
+
+        .prototype-box {
+            background-color: var(--card-fundo);
+            border-radius: 0.9rem;
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1.5fr);
+            gap: 1.25rem;
+            box-shadow: 0 4px 14px rgba(15, 27, 49, 0.08);
+            font-size: 0.9rem;
+            align-items: center;
+        }
+
+        .prototype-status {
+            font-size: 0.85rem;
+            color: var(--texto-suave);
+        }
+
+        footer {
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto-claro);
+            padding: 1rem;
+        }
+
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-left img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--cor-secundaria);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .investors-box,
+            .prototype-box {
+                grid-template-columns: 1fr;
+            }
+
+            .investors-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                align-items: flex-start;
+                background-color: var(--cor-fundo);
+                padding: 0.5rem 1rem 0.75rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            nav ul.mostrar {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: block;
+                color: var(--cor-texto-claro);
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+    </style>
+</head>
+<body>
+<header>
+    <div class="nav-container">
+        <div class="logo-area">
+            <img src="logo_safeplay.jpeg" alt="Logo SafePlay">
+            <div class="logo-text">SafePlay • CyberBuddies Brasil</div>
+        </div>
+
+        <div class="menu-toggle" id="menuToggle" aria-label="Abrir menu de navegação">
+            ☰
+        </div>
+
+        <nav aria-label="Navegação principal">
+            <ul id="navList">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#sobre-nos">Sobre nós</a></li>
+                <li><a href="#missao">Missão</a></li>
+                <li><a href="#desafio">Desafio atual</a></li>
+                <li><a href="#objetivo-geral">Objetivo geral</a></li>
+                <li><a href="#objetivos">Objetivos</a></li>
+                <li><a href="#estrutura">Estrutura</a></li>
+                <li><a href="#diferenciais">Diferenciais</a></li>
+                <li><a href="#vantagens">Vantagens</a></li>
+                <li><a href="#investidores">Investidores</a></li>
+                <li><a href="#prototipo">Protótipo</a></li>
+            </ul>
+            <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Alternar tema claro/escuro">
+                🌙
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <!-- HOME -->
+    <section id="home">
+        <div class="hero">
+            <div class="hero-text">
+                <span class="badge">Segurança e educação digital para jovens</span>
+                <h1>Construindo uma internet mais segura para crianças e adolescentes.</h1>
+                <p>
+                    Somos uma startup brasileira dedicada a apoiar famílias, escolas e profissionais
+                    na proteção e na educação digital de crianças e adolescentes, com ferramentas
+                    simples, linguagem acessível e baseadas em tecnologia.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#sobre-nos" class="btn btn-primary">Conheça a iniciativa</a>
+                    <a href="#investidores" class="btn btn-secundary">Sou investidor(a)</a>
+                </div>
+            </div>
+            <div class="hero-card" aria-label="Resumo da proposta">
+                <h2>Foco no público infantojuvenil</h2>
+                <p>
+                    Conteúdos, atividades e experiências pensadas para crianças e adolescentes,
+                    com apoio de especialistas em tecnologia, educação e comportamento.
+                </p>
+                <div class="hero-taglist">
+                    <span class="tag">Seguro</span>
+                    <span class="tag">Educativo</span>
+                    <span class="tag">Responsável</span>
+                    <span class="tag">Baseado em evidências</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOBRE NÓS -->
+    <section id="sobre-nos">
+        <h2 class="section-title">Sobre nós</h2>
+        <p class="section-subtitle">
+            Quem está por trás da iniciativa e qual é o propósito da startup.
+        </p>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Quem somos</h3>
+                <p>
+                    A SafePlay, parte da iniciativa CyberBuddies Brasil, é uma startup voltada à construção de soluções de
+                    segurança e educação digital para o público infantojuvenil. A proposta é unir
+                    tecnologia, conhecimento científico e linguagem acessível, com foco em
+                    prevenção e educação.
+                </p>
+                <p>
+                    O projeto nasce da experiência em segurança da informação, tecnologia e ensino,
+                    com o objetivo de transformar esses conhecimentos em ferramentas práticas
+                    para uso no dia a dia.
+                </p>
+            </div>
+            <div class="card">
+                <h3>Para quem entregamos valor</h3>
+                <ul>
+                    <li>Escolas que querem trabalhar cidadania e segurança digital em sala de aula.</li>
+                    <li>Famílias que buscam orientação objetiva sobre uso seguro da internet.</li>
+                    <li>Profissionais de educação, psicologia e tecnologia que lidam com crianças e adolescentes.</li>
+                    <li>Organizações interessadas em projetos de impacto social na área digital.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- MISSÃO -->
+    <section id="missao">
+        <h2 class="section-title">Missão</h2>
+        <p class="section-subtitle">
+            Qual o compromisso central da startup.
+        </p>
+        <div class="highlight-box">
+            <strong>Missão:</strong>
+            Tornar a internet um ambiente mais seguro, consciente e educativo para crianças e adolescentes,
+            por meio de soluções tecnológicas, conteúdos estruturados e experiências guiadas, em parceria com
+            famílias, escolas e profissionais.
+        </div>
+    </section>
+
+    <!-- DESAFIO ATUAL -->
+    <section id="desafio">
+        <h2 class="section-title">O desafio atual</h2>
+        <p class="section-subtitle">
+            Problemas concretos que afetam o público infantojuvenil no ambiente digital.
+        </p>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Cenário digital</h3>
+                <ul>
+                    <li>Acesso cada vez mais cedo a dispositivos conectados.</li>
+                    <li>Exposição a conteúdos inadequados e interações arriscadas.</li>
+                    <li>Dificuldade de pais e responsáveis em acompanhar tudo o que acontece online.</li>
+                    <li>Professores e escolas com pouco tempo e recursos para abordar o tema.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Lacunas identificadas</h3>
+                <ul>
+                    <li>Materiais práticos, atualizados e adaptados à linguagem de crianças e adolescentes.</li>
+                    <li>Ferramentas que ajudem a treinar decisões seguras no ambiente digital.</li>
+                    <li>Abordagem integrada entre família, escola e profissionais especializados.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- OBJETIVO GERAL -->
+    <section id="objetivo-geral">
+        <h2 class="section-title">Objetivo geral</h2>
+        <p class="section-subtitle">
+            O que a startup quer alcançar em termos de impacto.
+        </p>
+        <div class="highlight-box">
+            <strong>Objetivo geral:</strong>
+            Desenvolver e disponibilizar soluções digitais e educacionais que apoiem crianças, adolescentes,
+            famílias e escolas na prevenção de riscos online e na promoção de um uso saudável, ético e responsável
+            das tecnologias conectadas.
+        </div>
+    </section>
+
+    <!-- OBJETIVOS ESPECÍFICOS -->
+    <section id="objetivos">
+        <h2 class="section-title">Objetivos</h2>
+        <p class="section-subtitle">
+            Desdobrando o objetivo geral em ações concretas.
+        </p>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Objetivos voltados ao público</h3>
+                <ul>
+                    <li>Criar experiências interativas que ensinem segurança digital de forma clara e objetiva.</li>
+                    <li>Apoiar famílias com guias, conteúdos e materiais de acompanhamento.</li>
+                    <li>Oferecer recursos para que escolas possam incorporar o tema em seus projetos pedagógicos.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Objetivos de desenvolvimento</h3>
+                <ul>
+                    <li>Desenvolver protótipos funcionais de jogos sérios e atividades guiadas.</li>
+                    <li>Validar as soluções com usuários reais (crianças, adolescentes, familiares e educadores).</li>
+                    <li>Estabelecer parcerias com instituições de ensino e pesquisa para aprimorar continuamente as abordagens.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ESTRUTURA -->
+    <section id="estrutura">
+        <h2 class="section-title">Estrutura</h2>
+        <p class="section-subtitle">
+            Como o projeto está organizado internamente.
+        </p>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Pilares principais</h3>
+                <ul>
+                    <li><strong>Tecnologia:</strong> desenvolvimento de soluções digitais e interativas.</li>
+                    <li><strong>Educação:</strong> construção de conteúdos alinhados a boas práticas pedagógicas.</li>
+                    <li><strong>Pesquisa:</strong> base em evidências e acompanhamento de estudos e referências na área.</li>
+                    <li><strong>Impacto social:</strong> foco em resultados concretos para crianças, adolescentes e suas redes de apoio.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Equipe e atuação</h3>
+                <ul>
+                    <li>Profissionais com experiência em tecnologia e segurança da informação.</li>
+                    <li>Parcerias com especialistas em educação, psicologia e áreas relacionadas.</li>
+                    <li>Colaboração com escolas e organizações interessadas em projetos piloto.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- DIFERENCIAIS -->
+    <section id="diferenciais">
+        <h2 class="section-title">Diferenciais</h2>
+        <p class="section-subtitle">
+            O que torna a solução única e relevante.
+        </p>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Foco real no público infantojuvenil</h3>
+                <ul>
+                    <li>Linguagem direta, sem exageros e sem conteúdo sensacionalista.</li>
+                    <li>Abordagem adaptada a diferentes faixas etárias.</li>
+                    <li>Experiências que incentivam o pensamento crítico e a tomada de decisão responsável.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Base técnica e educacional</h3>
+                <ul>
+                    <li>Fundamentação em conhecimento de segurança da informação.</li>
+                    <li>Alinhamento com boas práticas de educação e cidadania digital.</li>
+                    <li>Possibilidade de integração com projetos pedagógicos e ações de escolas.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- VANTAGENS -->
+    <section id="vantagens">
+        <h2 class="section-title">Vantagens</h2>
+        <p class="section-subtitle">
+            Benefícios práticos para quem se conecta à iniciativa.
+        </p>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Para escolas e educadores</h3>
+                <ul>
+                    <li>Conteúdos organizados e prontos para uso em atividades e projetos.</li>
+                    <li>Material de apoio para trabalhar cidadania e segurança digital.</li>
+                    <li>Possibilidade de aplicação em oficinas, semanas temáticas e eventos.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Para famílias e responsáveis</h3>
+                <ul>
+                    <li>Informações objetivas e materiais de apoio para conversas em casa.</li>
+                    <li>Ferramentas para acompanhar o aprendizado das crianças e adolescentes.</li>
+                    <li>Orientações para uso mais seguro e consciente das tecnologias.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONVITE PARA INVESTIDORES -->
+    <section id="investidores">
+        <h2 class="section-title">Convite para investidores</h2>
+        <p class="section-subtitle">
+            Espaço dedicado a quem quer apoiar e escalar o impacto do projeto.
+        </p>
+        <div class="investors-box">
+            <div>
+                <h3>Um projeto com foco em impacto social e escalabilidade</h3>
+                <p>
+                    A iniciativa está em fase de validação e estruturação, com foco em ampliar o alcance
+                    para escolas, famílias e organizações interessadas em segurança e educação digital.
+                </p>
+                <p>
+                    Buscamos parceiros e investidores que desejem apoiar o desenvolvimento dos protótipos,
+                    a consolidação da plataforma e a expansão do projeto em nível nacional e, futuramente, internacional.
+                </p>
+                <a href="mailto:contato@cyberbuddiesbrasil.com" class="btn btn-primary">
+                    Fale com a equipe
+                </a>
+            </div>
+            <div class="investors-metrics" aria-label="Resumo de pontos de interesse para investidores">
+                <div class="metric">
+                    <strong>Foco</strong>
+                    Segurança e educação digital para crianças e adolescentes.
+                </div>
+                <div class="metric">
+                    <strong>Modelo</strong>
+                    Soluções digitais, conteúdos educativos e projetos em parceria com escolas e famílias.
+                </div>
+                <div class="metric">
+                    <strong>Estágio</strong>
+                    Desenvolvimento e validação de protótipos com usuários.
+                </div>
+                <div class="metric">
+                    <strong>Contato</strong>
+                    contato@cyberbuddiesbrasil.com
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROTÓTIPO -->
+    <section id="prototipo">
+        <h2 class="section-title">Protótipo</h2>
+        <p class="section-subtitle">
+            Visão geral da fase atual de desenvolvimento.
+        </p>
+        <div class="prototype-box">
+            <div>
+                <h3>O que está sendo desenvolvido</h3>
+                <p>
+                    Estamos estruturando um protótipo de solução interativa focada em segurança e educação
+                    digital para o público infantojuvenil. O objetivo é permitir que crianças e adolescentes
+                    testem situações do dia a dia online e pratiquem decisões mais seguras em um ambiente
+                    controlado e orientado.
+                </p>
+                <p>
+                    A versão inicial é voltada à validação de conceitos, fluxos de interação e formas de
+                    acompanhamento por parte de responsáveis e educadores.
+                </p>
+            </div>
+            <div>
+                <p class="prototype-status">
+                    <strong>Status atual:</strong> protótipo em desenvolvimento e preparação de testes iniciais
+                    com um grupo reduzido de participantes (escolas, famílias e profissionais parceiros).
+                </p>
+                <p class="prototype-status">
+                    Caso você tenha interesse em conhecer o protótipo ou participar como parceiro de testes,
+                    entre em contato com a equipe.
+                </p>
+
+                <!-- BOTÃO: TESTE NOSSO PROTÓTIPO -->
+                <a href="https://cyberbuddies.com.br/game.html"
+                   class="btn btn-primary"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Teste nosso protótipo
+                </a>
+
+                <!-- BOTÃO: MANIFESTAR INTERESSE -->
+                <a href="mailto:contato@cyberbuddiesbrasil.com?subject=Interesse%20em%20prototipo"
+                   class="btn btn-secundary"
+                   style="margin-left: 0.5rem; margin-top: 0.5rem; display: inline-flex;">
+                    Manifestar interesse
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <div class="footer-left">
+            <img src="logo_safeplay.jpeg" alt="Logo SafePlay rodapé">
+            <span>© <span id="anoAtual"></span> SafePlay • CyberBuddies Brasil — Todos os direitos reservados.</span>
+        </div>
+        <div class="footer-links">
+            <a href="#home">Início</a>
+            <a href="#sobre-nos">Sobre</a>
+            <a href="#investidores">Investidores</a>
+            <a href="#prototipo">Protótipo</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Toggle menu em dispositivos móveis
+    const menuToggle = document.getElementById('menuToggle');
+    const navList = document.getElementById('navList');
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            navList.classList.toggle('mostrar');
+        });
+    }
+
+    // Fechar menu ao clicar em um link (mobile)
+    navList.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                navList.classList.remove('mostrar');
+            }
+        });
+    });
+
+    // Atualiza ano no rodapé
+    document.getElementById('anoAtual').textContent = new Date().getFullYear();
+
+    // Tema claro / escuro com toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    // Carrega tema salvo (se houver)
+    const temaSalvo = localStorage.getItem('safeplay-tema');
+    if (temaSalvo === 'escuro') {
+        body.classList.add('tema-escuro');
+        if (themeToggle) themeToggle.textContent = '☀️';
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const modoEscuroAtivo = body.classList.toggle('tema-escuro');
+            themeToggle.textContent = modoEscuroAtivo ? '☀️' : '🌙';
+            localStorage.setItem('safeplay-tema', modoEscuroAtivo ? 'escuro' : 'claro');
+        });
+    }
+</script>
+</body>
+</html>
