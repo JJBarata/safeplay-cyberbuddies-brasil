@@ -125,7 +125,7 @@ https://cyberbuddies.com.br/game.html
 
 ## 📬 Contact
 
-📧 **contato@cyberbuddiesbrasil.com**
+📧 **contato@cyberbuddies.com.br**
 
 ---
 
